@@ -77,3 +77,29 @@ def parse_data_test():
                 'Name': 'Voice Memos',
             }],
     }, sorter.parse_data(library))
+
+def sort_playlist_items_test():
+    data = sorter.parse_data(library)
+    playlist = sorter.get_playlist(data, 'Purchased')
+    assert_list_equal([
+            { 'Track ID': 10035 },
+            { 'Track ID': 10687 },
+            { 'Track ID': 10519 },
+            { 'Track ID': 10038 },
+    ], playlist['Playlist Items'])
+
+    sorter.sort_playlist_items(playlist, sorter.SortingOrder.Ascending)
+    assert_list_equal([
+            { 'Track ID': 10035 },
+            { 'Track ID': 10038 },
+            { 'Track ID': 10519 },
+            { 'Track ID': 10687 },
+    ], playlist['Playlist Items'])
+
+    sorter.sort_playlist_items(playlist, sorter.SortingOrder.Descending)
+    assert_list_equal([
+            { 'Track ID': 10687 },
+            { 'Track ID': 10519 },
+            { 'Track ID': 10038 },
+            { 'Track ID': 10035 },
+    ], playlist['Playlist Items'])
