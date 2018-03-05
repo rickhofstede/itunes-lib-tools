@@ -23,6 +23,13 @@ library = """<?xml version="1.0" encoding="UTF-8"?>
 </plist>"""
 
 
+def get_playlist_names_test():
+    assert_list_equal(
+            ['Purchased', 'Voice Memos'],
+            sorter.get_playlist_names(sorter.parse_data(library)))
+    assert_false(sorter.get_playlist_names(None))
+    assert_false(sorter.get_playlist_names([]))
+
 def parse_data_test():
     assert_dict_equal({
             'Major Version': 1,
