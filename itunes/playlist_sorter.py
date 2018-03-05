@@ -10,6 +10,16 @@ def main():
         root = parse_data(library.read())
         playlists = get_playlist_names(root)
 
+def get_playlist(data, name):
+    '''Extract playlist from read data'''
+    if not name in get_playlist_names(data):
+        return False
+
+    for playlist in data['Playlists']:
+        if playlist['Name'] == name:
+            return playlist
+    return False
+
 def get_playlist_names(data):
     '''Extract playlist names from read data'''
     if not data or not 'Playlists' in data:

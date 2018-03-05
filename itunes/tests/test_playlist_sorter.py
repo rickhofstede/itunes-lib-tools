@@ -14,6 +14,21 @@ library = """<?xml version="1.0" encoding="UTF-8"?>
     <array>
         <dict>
             <key>Name</key><string>Purchased</string>
+            <key>Playlist Items</key>
+            <array>
+                <dict>
+                    <key>Track ID</key><integer>10035</integer>
+                </dict>
+                <dict>
+                    <key>Track ID</key><integer>10687</integer>
+                </dict>
+                <dict>
+                    <key>Track ID</key><integer>10519</integer>
+                </dict>
+                <dict>
+                    <key>Track ID</key><integer>10038</integer>
+                </dict>
+            </array>
         </dict>
         <dict>
             <key>Name</key><string>Voice Memos</string>
@@ -22,6 +37,21 @@ library = """<?xml version="1.0" encoding="UTF-8"?>
 </dict>
 </plist>"""
 
+
+def get_playlist_test():
+    data = sorter.parse_data(library)
+    assert_equal({
+        'Name': 'Purchased',
+        'Playlist Items': [
+            { 'Track ID': 10035 },
+            { 'Track ID': 10687 },
+            { 'Track ID': 10519 },
+            { 'Track ID': 10038 },
+        ]
+    }, sorter.get_playlist(data, 'Purchased'))
+    assert_false(sorter.get_playlist(data, 'abc'))
+    assert_false(sorter.get_playlist_names(None))
+    assert_false(sorter.get_playlist_names([]))
 
 def get_playlist_names_test():
     assert_list_equal(
@@ -37,6 +67,12 @@ def parse_data_test():
             'Tracks': {},
             'Playlists': [{
                 'Name': 'Purchased',
+                'Playlist Items': [
+                    { 'Track ID': 10035 },
+                    { 'Track ID': 10687 },
+                    { 'Track ID': 10519 },
+                    { 'Track ID': 10038 },
+                ]
             }, {
                 'Name': 'Voice Memos',
             }],
