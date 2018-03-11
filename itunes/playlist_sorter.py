@@ -3,10 +3,9 @@
 from operator import attrgetter
 
 import argparse
+import os.path
 import plistlib
 import sys
-
-file = "/Users/hofstederj/Documents/Temp/iTunes Music Library.xml"
 
 
 class SortingOrder:
@@ -16,12 +15,17 @@ class SortingOrder:
 def main():
     arg_parser = argparse.ArgumentParser(
             description='Sort iTunes playlist by track IDs.')
+    arg_parser.add_argument('library', help='path to iTunes library')
     arg_parser.add_argument('playlist', help='name of the playlist to be sorted')
     arg_parser.add_argument('-s', '--order',
             help='sorting order; ascending vs. descending', choices=['asc', 'desc'])
     args = arg_parser.parse_args()
 
-    with open(file) as library:
+    if not os.path.isfile(args.library):
+        print("iTunes library '%s' could not be found. Exiting..." % args.library)
+        sys.exit(1)
+
+    with open(args.library) as library:
         root = parse_data(library.read())
         playlists = get_playlist_names(root)
         if args.playlist not in playlists:
@@ -33,7 +37,7 @@ def main():
             order = SortingOrder.Ascending if args.order == 'asc' else SortingOrder.Descending
 
         sort_playlist_items(get_playlist(root, args.playlist), order)
-        plistlib.writePlist(root, file + ".new")
+        plistlib.writePlist(root, args.library + ".new")
 
 def get_playlist(data, name):
     '''Extract playlist from read data'''
