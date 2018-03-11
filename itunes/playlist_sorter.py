@@ -2,11 +2,11 @@
 
 from operator import attrgetter
 
+import argparse
 import plistlib
 import sys
 
 file = "/Users/hofstederj/Documents/Temp/iTunes Music Library.xml"
-playlist = 'Purchased'
 
 
 class SortingOrder:
@@ -14,14 +14,19 @@ class SortingOrder:
 
 
 def main():
+    arg_parser = argparse.ArgumentParser(
+            description='Sort iTunes playlist by track IDs.')
+    arg_parser.add_argument('playlist', help='name of the playlist to be sorted')
+    args = arg_parser.parse_args()
+
     with open(file) as library:
         root = parse_data(library.read())
         playlists = get_playlist_names(root)
-        if playlist not in playlists:
-            print("Playlist '%s' could not be found. Exiting..." % playlist)
+        if args.playlist not in playlists:
+            print("Playlist '%s' could not be found. Exiting..." % args.playlist)
             sys.exit(1)
 
-        sort_playlist_items(get_playlist(root, playlist), SortingOrder.Ascending)
+        sort_playlist_items(get_playlist(root, args.playlist), SortingOrder.Ascending)
         plistlib.writePlist(root, file + ".new")
 
 def get_playlist(data, name):
