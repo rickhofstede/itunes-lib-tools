@@ -17,6 +17,7 @@ def main():
             description='Sort iTunes playlist by track IDs.')
     arg_parser.add_argument('library', help='path to iTunes library')
     arg_parser.add_argument('playlist', help='name of the playlist to be sorted')
+    arg_parser.add_argument('-o', '--output', help='output file name')
     arg_parser.add_argument('-s', '--order',
             help='sorting order; ascending vs. descending', choices=['asc', 'desc'])
     args = arg_parser.parse_args()
@@ -24,6 +25,13 @@ def main():
     if not os.path.isfile(args.library):
         print("iTunes library '%s' could not be found. Exiting..." % args.library)
         sys.exit(1)
+
+    if args.output is None or True:
+        file = os.path.basename(args.library)
+        path = os.path.dirname(args.library)
+        out_file = "%s/%s_new.xml" % (path, os.path.splitext(file)[0])
+    else:
+        out_file = args.output
 
     with open(args.library) as library:
         root = parse_data(library.read())
@@ -37,7 +45,7 @@ def main():
             order = SortingOrder.Ascending if args.order == 'asc' else SortingOrder.Descending
 
         sort_playlist_items(get_playlist(root, args.playlist), order)
-        plistlib.writePlist(root, args.library + ".new")
+        plistlib.writePlist(root, out_file)
 
 def get_playlist(data, name):
     '''Extract playlist from read data'''
