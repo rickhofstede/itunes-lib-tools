@@ -17,6 +17,8 @@ def main():
     arg_parser = argparse.ArgumentParser(
             description='Sort iTunes playlist by track IDs.')
     arg_parser.add_argument('playlist', help='name of the playlist to be sorted')
+    arg_parser.add_argument('-s', '--order',
+            help='sorting order; ascending vs. descending', choices=['asc', 'desc'])
     args = arg_parser.parse_args()
 
     with open(file) as library:
@@ -26,7 +28,11 @@ def main():
             print("Playlist '%s' could not be found. Exiting..." % args.playlist)
             sys.exit(1)
 
-        sort_playlist_items(get_playlist(root, args.playlist), SortingOrder.Ascending)
+        order = SortingOrder.Ascending
+        if args.order is not None:
+            order = SortingOrder.Ascending if args.order == 'asc' else SortingOrder.Descending
+
+        sort_playlist_items(get_playlist(root, args.playlist), order)
         plistlib.writePlist(root, file + ".new")
 
 def get_playlist(data, name):
